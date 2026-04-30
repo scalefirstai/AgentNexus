@@ -1,0 +1,90 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint-and-smoke:
+    name: Lint shell + Node syntax + install smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: ShellCheck — install script and git hooks
+        uses: ludeeus/action-shellcheck@master
+        with:
+          severity: warning
+          scandir: '.'
+          additional_files: 'code-graph/hooks/post-commit code-graph/hooks/pre-push'
+          ignore_paths: node_modules
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Node syntax check (code-graph)
+        run: |
+          set -e
+          for f in $(find code-graph -name '*.js' -not -path '*/node_modules/*'); do
+            echo "checking $f"
+            node --check "$f"
+          done
+
+      - name: Install script smoke test
+        run: |
+          set -euo pipefail
+          # Build a fake git project as the install target.
+          tmp="$(mktemp -d)"
+          (cd "$tmp" && git init -q && git -c user.email=ci@x -c user.name=ci commit -q --allow-empty -m init)
+
+          # Run the installer in symlink mode (default).
+          ./scripts/install.sh "$tmp"
+
+          # Every workflow file in workflows/ (except README.md) must exist as a
+          # symlink in the target's .windsurf/workflows/.
+          missing=0
+          for src in workflows/*; do
+            name="$(basename "$src")"
+            [ "$name" = "README.md" ] && continue
+            if [ ! -L "$tmp/.windsurf/workflows/$name" ]; then
+              echo "missing symlink: $name"
+              missing=$((missing + 1))
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "install.sh smoke test failed: $missing missing entries"
+            exit 1
+          fi
+          echo "symlink mode: OK"
+
+          # Re-run with --copy into a second target, verify no symlinks.
+          tmp2="$(mktemp -d)"
+          (cd "$tmp2" && git init -q && git -c user.email=ci@x -c user.name=ci commit -q --allow-empty -m init)
+          ./scripts/install.sh --copy "$tmp2"
+
+          # Top-level entries should exist and not be symlinks.
+          for src in workflows/*; do
+            name="$(basename "$src")"
+            [ "$name" = "README.md" ] && continue
+            if [ ! -e "$tmp2/.windsurf/workflows/$name" ]; then
+              echo "missing entry (copy mode): $name"
+              exit 1
+            fi
+            if [ -L "$tmp2/.windsurf/workflows/$name" ]; then
+              echo "unexpected symlink in --copy mode: $name"
+              exit 1
+            fi
+          done
+          echo "copy mode: OK"
+
+          # Idempotency: re-running install on the same target should not error.
+          ./scripts/install.sh "$tmp"
+          echo "idempotency: OK"

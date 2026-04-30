@@ -2,6 +2,8 @@
 
 **Enterprise-ready Windsurf workflows for AI-assisted coding** — opinionated grilling, structural code intelligence, and built-in security reviews. Drop into any repo, ship through ARB / AppSec / DPO sign-off without inventing the artifacts yourself.
 
+[![CI](https://github.com/scalefirstai/AgentNexus/actions/workflows/ci.yml/badge.svg)](https://github.com/scalefirstai/AgentNexus/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/scalefirstai/AgentNexus?include_prereleases&sort=semver)](https://github.com/scalefirstai/AgentNexus/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Made for Windsurf](https://img.shields.io/badge/made%20for-Windsurf-2563eb)](https://windsurf.com)
 [![Workflows](https://img.shields.io/badge/workflows-8-7c3aed)](./workflows)
