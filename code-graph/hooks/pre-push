@@ -18,7 +18,7 @@ fi
 # Read refs from stdin (git pre-push protocol). Compute changed files between
 # remote_sha and local_sha. Fall back to HEAD~1..HEAD if remote is unknown.
 CHANGED=""
-while read -r local_ref local_sha remote_ref remote_sha; do
+while read -r _local_ref local_sha _remote_ref remote_sha; do
   if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
     continue  # branch deletion
   fi
