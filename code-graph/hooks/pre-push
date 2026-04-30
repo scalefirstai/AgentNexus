@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# code-graph pre-push hook: prints downstream impact for files in the push range.
+# Warning-only — never blocks the push.
+
+set -u
+
+if ! command -v code-graph >/dev/null 2>&1; then
+  exit 0
+fi
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+cd "$ROOT" || exit 0
+
+if [ ! -d ".codegraph" ]; then
+  exit 0
+fi
+
+# Read refs from stdin (git pre-push protocol). Compute changed files between
+# remote_sha and local_sha. Fall back to HEAD~1..HEAD if remote is unknown.
+CHANGED=""
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+    continue  # branch deletion
+  fi
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    range="HEAD~1..$local_sha"
+  else
+    range="$remote_sha..$local_sha"
+  fi
+  CHANGED+="$(git diff --name-only "$range" 2>/dev/null || true)"$'\n'
+done
+
+CHANGED=$(echo "$CHANGED" | grep -E '\.(ts|tsx|js|jsx|mjs|cjs)$' | sort -u)
+if [ -z "$CHANGED" ]; then
+  exit 0
+fi
+
+echo "==> code-graph impact:"
+# shellcheck disable=SC2086
+code-graph impact $CHANGED || true
+exit 0

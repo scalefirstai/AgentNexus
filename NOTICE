@@ -1,0 +1,63 @@
+AgentNexus
+==========
+
+This product includes software and documentation derived from third-party
+sources. Their licenses, copyright notices, and attributions are below.
+
+------------------------------------------------------------------------
+Project CodeGuard (CoSAI / OASIS Open Project)
+https://github.com/cosai-oasis/project-codeguard
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+
+The following files are derived from Project CodeGuard:
+
+  workflows/software-security.md
+  workflows/software-security/rules/codeguard-0-additional-cryptography.md
+  workflows/software-security/rules/codeguard-0-api-web-services.md
+  workflows/software-security/rules/codeguard-0-authentication-mfa.md
+  workflows/software-security/rules/codeguard-0-authorization-access-control.md
+  workflows/software-security/rules/codeguard-0-client-side-web-security.md
+  workflows/software-security/rules/codeguard-0-cloud-orchestration-kubernetes.md
+  workflows/software-security/rules/codeguard-0-data-storage.md
+  workflows/software-security/rules/codeguard-0-devops-ci-cd-containers.md
+  workflows/software-security/rules/codeguard-0-file-handling-and-uploads.md
+  workflows/software-security/rules/codeguard-0-framework-and-languages.md
+  workflows/software-security/rules/codeguard-0-iac-security.md
+  workflows/software-security/rules/codeguard-0-input-validation-injection.md
+  workflows/software-security/rules/codeguard-0-logging.md
+  workflows/software-security/rules/codeguard-0-mcp-security.md
+  workflows/software-security/rules/codeguard-0-mobile-apps.md
+  workflows/software-security/rules/codeguard-0-privacy-data-protection.md
+  workflows/software-security/rules/codeguard-0-safe-c-functions.md
+  workflows/software-security/rules/codeguard-0-session-management-and-cookies.md
+  workflows/software-security/rules/codeguard-0-supply-chain-security.md
+  workflows/software-security/rules/codeguard-0-xml-and-serialization.md
+  workflows/software-security/rules/codeguard-1-crypto-algorithms.md
+  workflows/software-security/rules/codeguard-1-digital-certificates.md
+  workflows/software-security/rules/codeguard-1-hardcoded-credentials.md
+  workflows/security-review.md
+  workflows/security-review/Security_Code_Reviewer_Guidelines.md
+
+The frontmatter has been adapted to Windsurf workflow format and relative
+paths have been adjusted, but rule content is unmodified.
+
+Project CodeGuard is © its contributors. See the upstream repository for
+the full contributor list.
+
+------------------------------------------------------------------------
+GitNexus (architectural inspiration)
+https://github.com/abhigyanpatwari/GitNexus
+
+AgentNexus's `code-graph/` CLI is a workflow-driven, minimal reimplementation
+inspired by GitNexus's design pattern (Kuzu-backed embedded code knowledge
+graph with git lifecycle integration). No code is copied from GitNexus.
+
+------------------------------------------------------------------------
+Other dependencies
+
+The `code-graph/` Node project depends on:
+
+  - kuzu (https://kuzudb.com) — MIT License
+
+See `code-graph/package.json` for current versions.

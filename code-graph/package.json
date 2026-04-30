@@ -1,0 +1,24 @@
+{
+  "name": "code-graph",
+  "version": "0.1.0",
+  "description": "Local code knowledge graph (Kuzu-backed) — driven by windsurf workflows.",
+  "type": "commonjs",
+  "bin": {
+    "code-graph": "bin/code-graph.js"
+  },
+  "main": "src/commands.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "kuzu": "^0.6.0"
+  },
+  "scripts": {
+    "init": "node bin/code-graph.js init",
+    "index": "node bin/code-graph.js index",
+    "update": "node bin/code-graph.js update",
+    "impact": "node bin/code-graph.js impact",
+    "map": "node bin/code-graph.js map"
+  },
+  "license": "MIT"
+}
