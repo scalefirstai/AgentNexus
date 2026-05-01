@@ -93,9 +93,14 @@ jobs:
         run: |
           set -euo pipefail
           ./scripts/sync-skills.sh
-          if ! git diff --exit-status -- skills/; then
+          # Plain git status; filter to skills/ entries. No flags that could
+          # vary across git versions.
+          dirty="$(git status --porcelain | grep ' skills/' || true)"
+          if [ -n "$dirty" ]; then
             echo
-            echo "skills/ is out of sync with workflows/."
+            echo "skills/ is out of sync with workflows/:"
+            echo "$dirty"
+            echo
             echo "Run scripts/sync-skills.sh locally and commit the result."
             exit 1
           fi
