@@ -19,20 +19,34 @@ The included installer handles the conversion automatically.
 
 ## Quick start
 
-```bash
-# From the AgentNexus repo root
-./scripts/install-claude-code.sh /path/to/your/project
+### Recommended: install as a plugin
 
-# Defaults to skills mode (recommended). For slash commands instead:
-./scripts/install-claude-code.sh --commands /path/to/your/project
+```
+/plugin install scalefirstai/AgentNexus
 ```
 
-Restart Claude Code. The skills are now invocable — type `/` in chat for slash-command mode, or just describe what you want and the model auto-invokes the matching skill.
+Claude Code reads the repo's `.claude-plugin/plugin.json` manifest and installs all eight skills. No clone, no script. Restart Claude Code and the skills are live — describe a task and the matching skill auto-invokes.
 
-For user-global install (available in every project):
+To pin to a release:
+
+```
+/plugin install scalefirstai/AgentNexus@v0.2.0
+```
+
+### Alternative: install via script (clone-and-copy)
+
+If you want the workflows in `.claude/skills/` without going through the plugin manager (e.g., to fork them per project, or to mix with a Windsurf install on the same repo):
 
 ```bash
-./scripts/install-claude-code.sh ~/  # installs into ~/.claude/skills/
+git clone https://github.com/scalefirstai/AgentNexus.git
+cd AgentNexus
+./scripts/install-claude-code.sh /path/to/your/project
+
+# Slash commands instead of skills:
+./scripts/install-claude-code.sh --commands /path/to/your/project
+
+# User-global (available in every project):
+./scripts/install-claude-code.sh ~
 ```
 
 ## Skills vs slash commands — which to pick
@@ -167,9 +181,9 @@ Result: `.windsurf/workflows/` and `.claude/skills/` live side by side. Each age
 
 ## Roadmap for Claude Code support
 
-- **Plugin manifest** (`.claude-plugin/plugin.json`) — let users install via `/plugin install scalefirstai/AgentNexus` instead of cloning + running a script.
 - **Native subagent for `grill-me`** (`.claude/agents/grill-me.md`) — instead of the orchestrator running design/security/privacy serially in one context, spawn three sub-agents in parallel and reconcile. Faster, more focused contexts.
-- **Settings.json bundle** — ship a recommended `.claude/settings.json` snippet for hooks + permissions for the install script to merge in.
+- **Settings.json bundle** — ship a recommended `.claude/settings.json` snippet for hooks + permissions that the plugin installs alongside the skills.
+- **Per-language `software-security` split** — currently all 23 CodeGuard rules live in one skill; splitting into per-language skills would tighten the context budget when the model only needs Python rules.
 
 Open an issue if you'd like any of these prioritised.
 

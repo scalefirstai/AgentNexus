@@ -32,17 +32,26 @@ This is opinionated. The grills are structured around STRIDE, GDPR Art 6/9/22/35
 
 ## Quick start
 
+### Claude Code
+
+```
+/plugin install scalefirstai/AgentNexus
+```
+
+That's it. The plugin manifest installs all eight skills.
+
+### Windsurf
+
 ```bash
-# 1. Clone the repo
 git clone https://github.com/scalefirstai/AgentNexus.git
 cd AgentNexus
+./scripts/install.sh /path/to/your/project
+```
 
-# 2. Install into your project
-./scripts/install.sh /path/to/your/project              # Windsurf
-./scripts/install-claude-code.sh /path/to/your/project  # Claude Code (skills)
+### code-graph CLI (optional, agent-agnostic)
 
-# 3. (Optional) Build the code-graph CLI — agent-agnostic
-cd code-graph && npm install && npm link
+```bash
+cd AgentNexus/code-graph && npm install && npm link
 cd /path/to/your/project
 code-graph init && code-graph index && code-graph install-hooks
 ```
@@ -89,6 +98,19 @@ The short version: pick up a ticket, run `/grill-me` to triage which axes apply,
 | [docs/workflow-reference.md](./docs/workflow-reference.md) | Every workflow in detail, plus composition patterns |
 | [docs/mcp-integration.md](./docs/mcp-integration.md) | MCP server setup recipes (JIRA, GitLab/GitHub, SonarQube) |
 | [code-graph/README.md](./code-graph/README.md) | The Kuzu-backed CLI: schema, commands, limitations |
+
+## Repo layout
+
+| Path | Purpose |
+|---|---|
+| `workflows/<name>.md` | Canonical workflow source (Windsurf format). Edit here. |
+| `skills/<name>/SKILL.md` | Generated mirror in Claude Code skill format. **Don't edit by hand** — run `scripts/sync-skills.sh` after changing a workflow. CI enforces the skills/ tree stays in sync. |
+| `.claude-plugin/plugin.json` | Manifest consumed by `/plugin install`. References paths under `skills/`. |
+| `code-graph/` | Node CLI (Kuzu-backed local graph DB). Agent-agnostic. |
+| `scripts/install.sh` | Windsurf installer (symlinks `workflows/` into `.windsurf/workflows/`). |
+| `scripts/install-claude-code.sh` | Claude Code installer (copies `skills/` into `.claude/skills/`). |
+| `scripts/sync-skills.sh` | Regenerates `skills/` from `workflows/`. |
+| `docs/` | Adoption guides (start here for any new use case). |
 
 ## Architecture
 

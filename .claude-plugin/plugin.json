@@ -1,0 +1,32 @@
+{
+  "name": "agentnexus",
+  "version": "0.2.0",
+  "description": "Enterprise-ready agentic workflows for AI-assisted coding — opinionated grilling (design / security / privacy), structural code intelligence, and Project CodeGuard security rules. Drop into any repo and ship through ARB / AppSec / DPO sign-off.",
+  "homepage": "https://github.com/scalefirstai/AgentNexus",
+  "repository": "https://github.com/scalefirstai/AgentNexus",
+  "license": "MIT",
+  "author": {
+    "name": "ScaleFirst AI",
+    "url": "https://github.com/scalefirstai"
+  },
+  "keywords": [
+    "windsurf",
+    "claude-code",
+    "agentic-workflows",
+    "code-knowledge-graph",
+    "threat-modeling",
+    "stride",
+    "gdpr",
+    "project-codeguard"
+  ],
+  "skills": [
+    "./skills/grill-me",
+    "./skills/grill-design",
+    "./skills/grill-security",
+    "./skills/grill-privacy",
+    "./skills/code-graph",
+    "./skills/code-knowledge-graph",
+    "./skills/security-review",
+    "./skills/software-security"
+  ]
+}

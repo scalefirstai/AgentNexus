@@ -89,12 +89,46 @@ jobs:
           ./scripts/install.sh "$tmp"
           echo "idempotency: OK"
 
+      - name: skills/ in sync with workflows/
+        run: |
+          set -euo pipefail
+          ./scripts/sync-skills.sh
+          if ! git diff --exit-status -- skills/; then
+            echo
+            echo "skills/ is out of sync with workflows/."
+            echo "Run scripts/sync-skills.sh locally and commit the result."
+            exit 1
+          fi
+          echo "skills/ is in sync."
+
+      - name: Plugin manifest is valid JSON and references existing skills
+        run: |
+          set -euo pipefail
+          # Validate JSON.
+          python3 -c "import json,sys; json.load(open('.claude-plugin/plugin.json'))"
+          # Every listed skill path must exist with a SKILL.md inside.
+          missing=0
+          while IFS= read -r path; do
+            full="${path#./}"
+            if [ ! -f "$full/SKILL.md" ]; then
+              echo "missing skill referenced in plugin.json: $path"
+              missing=$((missing + 1))
+            fi
+          done < <(python3 -c "
+          import json
+          for s in json.load(open('.claude-plugin/plugin.json'))['skills']:
+              print(s)
+          ")
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+          echo "plugin manifest: OK"
+
       - name: Claude Code installer smoke test
         run: |
           set -euo pipefail
 
-          # Skills mode (default) — every workflow becomes a skill directory
-          # with SKILL.md and any companion files.
+          # Skills mode (default) — copies skills/ into the target.
           tmp="$(mktemp -d)"
           (cd "$tmp" && git init -q && git -c user.email=ci@x -c user.name=ci commit -q --allow-empty -m init)
           ./scripts/install-claude-code.sh "$tmp"

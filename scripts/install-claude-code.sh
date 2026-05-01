@@ -65,6 +65,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SRC_WORKFLOWS="$REPO_ROOT/workflows"
+SRC_SKILLS="$REPO_ROOT/skills"
 TARGET_ABS="$(cd "$TARGET" && pwd)"
 
 if [ ! -d "$SRC_WORKFLOWS" ]; then
@@ -85,62 +86,44 @@ echo
 installed=0
 skipped=0
 
-for src in "$SRC_WORKFLOWS"/*.md; do
-  name="$(basename "$src" .md)"
-  if [ "$name" = "README" ]; then
-    continue
+if [ "$MODE" = "skills" ]; then
+  if [ ! -d "$SRC_SKILLS" ]; then
+    echo "error: $SRC_SKILLS not found — run scripts/sync-skills.sh first" >&2
+    exit 1
   fi
-
-  companion_dir="$SRC_WORKFLOWS/$name"
-  has_companion=0
-  companion_note=""
-  if [ -d "$companion_dir" ]; then
-    has_companion=1
-    companion_note=" (+ companion)"
-  fi
-
-  case "$MODE" in
-    skills)
-      skill_dir="$DST/$name"
-      mkdir -p "$skill_dir"
-
-      # Insert `name: <name>` into frontmatter (immediately after the opening
-      # `---` line), unless the file already has a name field.
-      if grep -m1 -q '^name:' "$src"; then
-        cp "$src" "$skill_dir/SKILL.md"
-      else
-        awk -v name="$name" '
-          NR==1 && /^---$/ {
-            print
-            print "name: " name
-            inserted=1
-            next
-          }
-          { print }
-        ' "$src" > "$skill_dir/SKILL.md"
-      fi
-
-      if [ "$has_companion" -eq 1 ]; then
-        # Copy companion contents into the skill directory (recursive).
-        cp -R "$companion_dir/." "$skill_dir/"
-      fi
-
-      echo "  skill   $name${companion_note}"
-      installed=$((installed + 1))
-      ;;
-
-    commands)
-      if [ "$has_companion" -eq 1 ]; then
-        echo "  skip    $name (has companion dir; use skills mode)"
-        skipped=$((skipped + 1))
-        continue
-      fi
-      cp "$src" "$DST/$name.md"
-      echo "  command $name"
-      installed=$((installed + 1))
-      ;;
-  esac
-done
+  for skill_src in "$SRC_SKILLS"/*/; do
+    name="$(basename "$skill_src")"
+    cp -R "$skill_src" "$DST/$name"
+    if [ -d "$skill_src/$(basename "$skill_src")" ]; then
+      :
+    fi
+    # Detect companion files for the user-facing log message.
+    extra="$(find "$DST/$name" -mindepth 1 -not -name SKILL.md | head -1)"
+    if [ -n "$extra" ]; then
+      echo "  skill   $name (+ companion)"
+    else
+      echo "  skill   $name"
+    fi
+    installed=$((installed + 1))
+  done
+else
+  # Commands mode: read workflows/ directly. Companion-bearing workflows
+  # don't fit the single-file commands format and are skipped.
+  for src in "$SRC_WORKFLOWS"/*.md; do
+    name="$(basename "$src" .md)"
+    if [ "$name" = "README" ]; then
+      continue
+    fi
+    if [ -d "$SRC_WORKFLOWS/$name" ]; then
+      echo "  skip    $name (has companion dir; use skills mode)"
+      skipped=$((skipped + 1))
+      continue
+    fi
+    cp "$src" "$DST/$name.md"
+    echo "  command $name"
+    installed=$((installed + 1))
+  done
+fi
 
 echo
 echo "Done. $installed installed, $skipped skipped."
