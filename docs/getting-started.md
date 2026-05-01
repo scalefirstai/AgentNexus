@@ -139,6 +139,7 @@ Wire the pre-push hook (`code-graph install-hooks` already did this if you ran i
 
 ## Next steps
 
-- [docs/workflow-reference.md](./workflow-reference.md) — every workflow, in detail
-- [docs/walkthrough.md](./walkthrough.md) — end-to-end developer story with JIRA + GitLab + Sonar
-- [docs/mcp-integration.md](./mcp-integration.md) — MCP server setup recipes
+- **Starting a brand new project?** [docs/new-project.md](./new-project.md) — greenfield walkthrough from a requirements spec to a scaffolded project with design / security / privacy artifacts and a first vertical slice shipped.
+- **Joining an existing project?** [docs/walkthrough.md](./walkthrough.md) — steady-state ticket flow with JIRA + GitLab + SonarQube MCP.
+- [docs/workflow-reference.md](./workflow-reference.md) — every workflow, in detail.
+- [docs/mcp-integration.md](./mcp-integration.md) — MCP server setup recipes.

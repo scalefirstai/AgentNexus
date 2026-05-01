@@ -76,6 +76,17 @@ Walkthrough with JIRA + GitLab + SonarQube MCP: [docs/walkthrough.md](./docs/wal
 
 The short version: pick up a ticket, run `/grill-me` to triage which axes apply, run the axis grills in order, implement with TDD using the `code-graph impact` output to bound blast radius, push and let pre-push hooks publish the impact list to the MR description, and clear approvers per axis.
 
+## Documentation
+
+| Doc | When to read |
+|---|---|
+| [docs/getting-started.md](./docs/getting-started.md) | Five minutes from cloning AgentNexus to your first grill |
+| [docs/new-project.md](./docs/new-project.md) | Greenfield: from a requirements spec to a scaffolded project with all three grill artifacts and a first slice shipped |
+| [docs/walkthrough.md](./docs/walkthrough.md) | Steady-state: existing repo, ticket pickup, MR through approvers (with JIRA + GitLab + SonarQube MCP) |
+| [docs/workflow-reference.md](./docs/workflow-reference.md) | Every workflow in detail, plus composition patterns |
+| [docs/mcp-integration.md](./docs/mcp-integration.md) | MCP server setup recipes (JIRA, GitLab/GitHub, SonarQube) |
+| [code-graph/README.md](./code-graph/README.md) | The Kuzu-backed CLI: schema, commands, limitations |
+
 ## Architecture
 
 ```
