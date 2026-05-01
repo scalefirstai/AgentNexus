@@ -1,11 +1,12 @@
 # AgentNexus
 
-**Enterprise-ready Windsurf workflows for AI-assisted coding** — opinionated grilling, structural code intelligence, and built-in security reviews. Drop into any repo, ship through ARB / AppSec / DPO sign-off without inventing the artifacts yourself.
+**Enterprise-ready agentic workflows for AI-assisted coding** — opinionated grilling, structural code intelligence, and built-in security reviews. Works with [Windsurf](https://windsurf.com) and [Claude Code](https://claude.com/claude-code). Drop into any repo, ship through ARB / AppSec / DPO sign-off without inventing the artifacts yourself.
 
 [![CI](https://github.com/scalefirstai/AgentNexus/actions/workflows/ci.yml/badge.svg)](https://github.com/scalefirstai/AgentNexus/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/scalefirstai/AgentNexus?include_prereleases&sort=semver)](https://github.com/scalefirstai/AgentNexus/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Made for Windsurf](https://img.shields.io/badge/made%20for-Windsurf-2563eb)](https://windsurf.com)
+[![Windsurf](https://img.shields.io/badge/Windsurf-supported-2563eb)](https://windsurf.com)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-supported-d97706)](https://claude.com/claude-code)
 [![Workflows](https://img.shields.io/badge/workflows-8-7c3aed)](./workflows)
 [![CodeGuard rules](https://img.shields.io/badge/CodeGuard%20rules-23-ea580c)](./workflows/software-security/rules)
 [![Status](https://img.shields.io/badge/status-early%20access-orange)](#roadmap)
@@ -32,20 +33,21 @@ This is opinionated. The grills are structured around STRIDE, GDPR Art 6/9/22/35
 ## Quick start
 
 ```bash
-# 1. Clone or download the workflows folder
+# 1. Clone the repo
 git clone https://github.com/scalefirstai/AgentNexus.git
 cd AgentNexus
 
-# 2. Install the workflows into the project you want to use them in
-./scripts/install.sh /path/to/your/project
+# 2. Install into your project
+./scripts/install.sh /path/to/your/project              # Windsurf
+./scripts/install-claude-code.sh /path/to/your/project  # Claude Code (skills)
 
-# 3. (Optional) Build the code-graph CLI
+# 3. (Optional) Build the code-graph CLI — agent-agnostic
 cd code-graph && npm install && npm link
 cd /path/to/your/project
 code-graph init && code-graph index && code-graph install-hooks
 ```
 
-In Windsurf, type `/grill-me` (or any of the individual axes) to start a session. See [docs/getting-started.md](./docs/getting-started.md) for the full setup.
+Type `/grill-me` in Windsurf, or describe a task ("grill the design for X") in Claude Code and the matching skill auto-invokes. See [docs/getting-started.md](./docs/getting-started.md) for full setup, or [docs/claude-code.md](./docs/claude-code.md) for the Windsurf↔Claude Code mapping.
 
 ## What's in the box
 
@@ -83,6 +85,7 @@ The short version: pick up a ticket, run `/grill-me` to triage which axes apply,
 | [docs/getting-started.md](./docs/getting-started.md) | Five minutes from cloning AgentNexus to your first grill |
 | [docs/new-project.md](./docs/new-project.md) | Greenfield: from a requirements spec to a scaffolded project with all three grill artifacts and a first slice shipped |
 | [docs/walkthrough.md](./docs/walkthrough.md) | Steady-state: existing repo, ticket pickup, MR through approvers (with JIRA + GitLab + SonarQube MCP) |
+| [docs/claude-code.md](./docs/claude-code.md) | Windsurf↔Claude Code mapping; install as skills or slash commands |
 | [docs/workflow-reference.md](./docs/workflow-reference.md) | Every workflow in detail, plus composition patterns |
 | [docs/mcp-integration.md](./docs/mcp-integration.md) | MCP server setup recipes (JIRA, GitLab/GitHub, SonarQube) |
 | [code-graph/README.md](./code-graph/README.md) | The Kuzu-backed CLI: schema, commands, limitations |

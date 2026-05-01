@@ -88,3 +88,65 @@ jobs:
           # Idempotency: re-running install on the same target should not error.
           ./scripts/install.sh "$tmp"
           echo "idempotency: OK"
+
+      - name: Claude Code installer smoke test
+        run: |
+          set -euo pipefail
+
+          # Skills mode (default) — every workflow becomes a skill directory
+          # with SKILL.md and any companion files.
+          tmp="$(mktemp -d)"
+          (cd "$tmp" && git init -q && git -c user.email=ci@x -c user.name=ci commit -q --allow-empty -m init)
+          ./scripts/install-claude-code.sh "$tmp"
+
+          missing=0
+          for src in workflows/*.md; do
+            name="$(basename "$src" .md)"
+            [ "$name" = "README" ] && continue
+            if [ ! -f "$tmp/.claude/skills/$name/SKILL.md" ]; then
+              echo "missing skill: $name"
+              missing=$((missing + 1))
+            fi
+            # Confirm `name:` was inserted into frontmatter.
+            if ! head -5 "$tmp/.claude/skills/$name/SKILL.md" | grep -q "^name: $name\$"; then
+              echo "missing or wrong name: in $name/SKILL.md"
+              missing=$((missing + 1))
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "skills mode: $missing failures"
+            exit 1
+          fi
+          echo "skills mode: OK"
+
+          # Companion-bearing skills must include their bundled files.
+          for skill in software-security security-review code-knowledge-graph; do
+            count="$(find "$tmp/.claude/skills/$skill" -type f ! -name SKILL.md | wc -l)"
+            if [ "$count" -lt 1 ]; then
+              echo "skill $skill missing companion files"
+              exit 1
+            fi
+          done
+          echo "companion files: OK"
+
+          # Commands mode — companion-bearing workflows skipped, others copied.
+          tmp2="$(mktemp -d)"
+          (cd "$tmp2" && git init -q && git -c user.email=ci@x -c user.name=ci commit -q --allow-empty -m init)
+          ./scripts/install-claude-code.sh --commands "$tmp2"
+
+          for src in workflows/*.md; do
+            name="$(basename "$src" .md)"
+            [ "$name" = "README" ] && continue
+            if [ -d "workflows/$name" ]; then
+              if [ -e "$tmp2/.claude/commands/$name.md" ]; then
+                echo "$name should have been skipped in commands mode"
+                exit 1
+              fi
+            else
+              if [ ! -f "$tmp2/.claude/commands/$name.md" ]; then
+                echo "missing command: $name"
+                exit 1
+              fi
+            fi
+          done
+          echo "commands mode: OK"
